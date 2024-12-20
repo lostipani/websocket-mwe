@@ -15,14 +15,14 @@ logging.basicConfig(
 async def main(data: List[Any]):
     try:
         URI = f"ws://{os.environ.get("WS_HOST")}:{os.environ.get("WS_PORT")}"
+        async with connect(URI) as websocket:
+            async for message in websocket:
+                data.append(json.loads(message)["value"])
+                arr = np.array(data)
+                logging.info(f"mean: {np.mean(arr)} and std: {np.std(arr)}")
     except ConnectionRefusedError as error:
         logging.error(error)
         raise
-    async with connect(URI) as websocket:
-        async for message in websocket:
-            data.append(json.loads(message)["value"])
-            arr = np.array(data)
-            logging.info(f"mean: {np.mean(arr)} and std: {np.std(arr)}")
 
 
 if __name__ == "__main__":
