@@ -14,7 +14,12 @@ logging.basicConfig(
 
 async def main(data: List[Any]):
     try:
-        URI = f"ws://{os.environ.get("WS_HOST")}:{os.environ.get("WS_PORT")}"
+        URI = f"ws://{os.environ["WS_HOST"]}:{os.environ["WS_PORT"]}/ws"
+    except KeyError as error:
+        logging.error("missing WS_HOST and/or WS_PORT as env vars")
+        raise
+
+    try:
         async with connect(URI) as websocket:
             async for message in websocket:
                 data.append(json.loads(message)["value"])

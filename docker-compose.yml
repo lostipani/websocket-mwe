@@ -5,7 +5,7 @@ services:
       context: ./
       dockerfile: server/Dockerfile
     networks:
-      - ws-network
+      - local-network
     ports:
       - "12345:12345"
     environment:
@@ -13,12 +13,12 @@ services:
       WS_PORT: 12345
       LOGLEVEL: "INFO"
 
-  client:
+  client-simple:
     build:
       context: ./
-      dockerfile: client_cooperative/Dockerfile
+      dockerfile: client_simple/Dockerfile
     networks:
-      - ws-network
+      - local-network
     environment:
       WS_HOST: "server"
       WS_PORT: 12345
@@ -27,5 +27,5 @@ services:
       - server
 
 networks:
-  ws-network:
+  local-network:
     driver: bridge
