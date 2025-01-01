@@ -1,11 +1,10 @@
 import os
-import json
 from typing import Dict
 import random
 import asyncio
 
 import uvicorn
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI, WebSocket, status
 from fastapi.websockets import WebSocketDisconnect
 
 app = FastAPI()
@@ -27,16 +26,24 @@ async def ws_endpoint(websocket: WebSocket):
         await asyncio.sleep(1)
 
 
-@app.get("/")
+@app.get("/http")
 def http_endpoint():
     return producer()
+
+
+@app.get(
+    "/healthcheck",
+    status_code=status.HTTP_200_OK,
+)
+def healthcheck():
+    return {"value": "OK"}
 
 
 if __name__ == "__main__":
     uvicorn.run(
         "server:app",
-        host=os.getenv("WS_HOST", "0.0.0.0"),
-        port=os.getenv("WS_PORT", 12345),
-        log_level=os.getenv("LOGLEVEL", "info"),
+        host="0.0.0.0",
+        port=int(os.getenv("WS_PORT", 12345)),
+        log_level=str(os.getenv("LOGLEVEL", "info")).lower(),
         ws="websockets",
     )

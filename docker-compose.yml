@@ -9,9 +9,14 @@ services:
     ports:
       - "12345:12345"
     environment:
-      WS_HOST: "0.0.0.0"
       WS_PORT: 12345
       LOGLEVEL: "INFO"
+    healthcheck:
+      test: [ "CMD-SHELL", "curl http://localhost:12345/healthcheck" ]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
 
   client-simple:
     build:
@@ -24,7 +29,8 @@ services:
       WS_PORT: 12345
       LOGLEVEL: "INFO"
     depends_on:
-      - server
+      server:
+        condition: service_healthy
 
 networks:
   local-network:

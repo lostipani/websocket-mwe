@@ -1,2 +1,4 @@
 numpy==2.2.0
 websockets==14.1
+fastapi==0.115.6
+uvicorn==0.34.0
