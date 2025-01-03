@@ -37,7 +37,7 @@ def http_endpoint():
     status_code=status.HTTP_200_OK,
 )
 def healthcheck():
-    return {"value": "OK"}
+    return {"value": 0}
 
 
 if __name__ == "__main__":
