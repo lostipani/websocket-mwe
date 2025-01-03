@@ -1,10 +1,9 @@
 import os
 import json
-import asyncio
 import logging
 import numpy as np
-from typing import List, Any
-from websockets.asyncio.client import connect
+from typing import List
+from websockets.sync.client import connect
 
 logging.basicConfig(
     format="%(message)s",
@@ -12,7 +11,7 @@ logging.basicConfig(
 )
 
 
-async def main(data: List[Any]):
+def main(data: List[int]) -> None:
     try:
         URI = f"ws://{os.environ["WS_HOST"]}:{os.environ["WS_PORT"]}/ws"
     except KeyError as error:
@@ -20,8 +19,8 @@ async def main(data: List[Any]):
         raise
 
     try:
-        async with connect(URI) as websocket:
-            async for message in websocket:
+        with connect(URI) as websocket:
+            for message in websocket:
                 data.append(json.loads(message)["value"])
                 arr = np.array(data)
                 logging.info(f"mean: {np.mean(arr)} and std: {np.std(arr)}")
@@ -31,5 +30,5 @@ async def main(data: List[Any]):
 
 
 if __name__ == "__main__":
-    data = list()
-    asyncio.run(main(data))
+    data: List[int] = []
+    main(data)

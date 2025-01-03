@@ -4,6 +4,6 @@ WORKDIR /app
 COPY ./requirements.txt /app
 RUN pip install --no-cache-dir --upgrade -r ./requirements.txt
 
-COPY client_simple/client.py /app
+COPY client_synchro/client.py /app
 
 CMD ["python", "client.py"]

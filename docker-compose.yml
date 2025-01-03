@@ -1,6 +1,7 @@
 services:
 
   server:
+    profiles: [ 'synchro', 'cooperative' ]
     build:
       context: ./
       dockerfile: server/Dockerfile
@@ -18,10 +19,26 @@ services:
       start_period: 30s
       timeout: 10s
 
-  client-simple:
+  client-synchro:
+    profiles: [ 'synchro' ]
     build:
       context: ./
-      dockerfile: client_simple/Dockerfile
+      dockerfile: client_synchro/Dockerfile
+    networks:
+      - local-network
+    environment:
+      WS_HOST: "server"
+      WS_PORT: 12345
+      LOGLEVEL: "INFO"
+    depends_on:
+      server:
+        condition: service_healthy
+
+  client-cooperative:
+    profiles: [ 'cooperative' ]
+    build:
+      context: ./
+      dockerfile: client_cooperative/Dockerfile
     networks:
       - local-network
     environment:
