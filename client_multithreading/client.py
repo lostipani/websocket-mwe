@@ -2,9 +2,10 @@ import os
 import json
 import logging
 import numpy as np
+import threading
 import asyncio
-from typing import List, Tuple
-from websockets.asyncio.client import connect
+from typing import List
+from websockets.sync.client import connect
 
 logging.basicConfig(
     format="%(message)s",
@@ -23,29 +24,28 @@ async def receiver(URI: str, data: List[int]) -> None:
         raise
 
 
-async def calculator(data: List[int]) -> Tuple[float, float]:
+def calculator(data: List[int]) -> None:
     arr = np.array(data)
-    if arr.size > 0:
-        logging.info("mean: %.6f and std: %.6f", np.mean(arr), np.std(arr))
-    else:
-        logging.warning("no data")
-    await asyncio.sleep(0)
+    logging.info("mean: %.6f and std: %.6f", np.mean(arr), np.std(arr))
 
 
-async def main(data: List[int]):
+def main(data: List[int]):
     try:
         URI = f"ws://{os.environ["WS_HOST"]}:{os.environ["WS_PORT"]}/ws"
     except KeyError:
         logging.error("missing WS_HOST and/or WS_PORT as env vars")
         raise
 
-    tasks = [
-        asyncio.create_task(receiver(URI, data)),
-        asyncio.create_task(calculator(data)),
+    threads = [
+        asyncio.to_thread(receiver, URI, data),
+        threading.Thread(target=calculator, args=(data,)),
     ]
-    await asyncio.gather(*tasks)
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
 
 
 if __name__ == "__main__":
     data: List[int] = []
-    asyncio.run(main(data))
+    main(data)
