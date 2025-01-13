@@ -24,7 +24,7 @@ and in another terminal session
 export WS_HOST=127.0.0.1
 export WS_PORT=12345
 export LOGLEVEL="INFO"
-python client_<method>/client.py
+python -m client_<method>.client
 ```
 
 #### On Docker

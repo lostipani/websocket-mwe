@@ -1,9 +1,11 @@
 FROM python:3.12-slim
 
-WORKDIR /app
-COPY ./requirements.txt /app
+COPY ./requirements.txt /
 RUN pip install --no-cache-dir --upgrade -r ./requirements.txt
 
-COPY client_synchro/client.py /app
+WORKDIR /app
+COPY __init__.py /app
+COPY commons /app/commons
+COPY client_synchro /app/client
 
-CMD ["python", "client.py"]
+CMD ["python", "-m", "client.client"]

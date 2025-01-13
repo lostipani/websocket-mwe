@@ -22,7 +22,7 @@ services:
   client-synchro:
     profiles: [ 'synchro' ]
     build:
-      context: ./
+      context: .
       dockerfile: client_synchro/Dockerfile
     networks:
       - local-network
