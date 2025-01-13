@@ -2,10 +2,11 @@ import os
 from typing import Dict
 import random
 import asyncio
-
 import uvicorn
 from fastapi import FastAPI, WebSocket, status
 from fastapi.websockets import WebSocketDisconnect
+
+from commons.parser import get_server_frequency
 
 app = FastAPI()
 
@@ -23,7 +24,7 @@ async def ws_endpoint(websocket: WebSocket):
             await websocket.send_json(data)
         except WebSocketDisconnect:
             break
-        await asyncio.sleep(1)
+        await asyncio.sleep(get_server_frequency())
 
 
 @app.get("/http")
@@ -41,7 +42,7 @@ def healthcheck():
 
 if __name__ == "__main__":
     uvicorn.run(
-        "server:app",
+        "server.server:app",
         host="0.0.0.0",
         port=int(os.getenv("WS_PORT", 12345)),
         log_level=str(os.getenv("LOGLEVEL", "info")).lower(),

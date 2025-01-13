@@ -12,6 +12,7 @@ services:
     environment:
       WS_PORT: 12345
       LOGLEVEL: "INFO"
+      SERVER_FREQUENCY: 0.5
     healthcheck:
       test: [ "CMD-SHELL", "curl http://localhost:12345/healthcheck" ]
       interval: 10s
@@ -22,7 +23,7 @@ services:
   client-synchro:
     profiles: [ 'synchro' ]
     build:
-      context: .
+      context: ./
       dockerfile: client_synchro/Dockerfile
     networks:
       - local-network

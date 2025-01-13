@@ -1,10 +1,12 @@
 FROM python:3.12-slim
 RUN apt-get -y update; apt-get -y install curl
 
-WORKDIR /app
-COPY ./requirements.txt /app
+COPY ./requirements.txt /
 RUN pip install --no-cache-dir --upgrade -r ./requirements.txt
 
-COPY server/server.py /app
+WORKDIR /app
+COPY __init__.py /app
+COPY commons /app/commons
+COPY server /app/server
 
-CMD ["python", "server.py"]
+CMD ["python", "-m", "server.server"]

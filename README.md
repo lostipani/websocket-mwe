@@ -17,6 +17,7 @@ server and computes the statistics.
 #### Locally
 ```bash
 pip install -r requirements.txt
+export SERVER_FREQUENCY=0.5
 python server/server.py
 ```
 and in another terminal session
