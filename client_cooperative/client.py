@@ -24,12 +24,13 @@ async def receiver(URI: str, data: List[int]) -> None:
 
 
 async def calculator(data: List[int]) -> Tuple[float, float]:
-    arr = np.array(data)
-    if arr.size > 0:
-        logging.info("mean: %.6f and std: %.6f", np.mean(arr), np.std(arr))
-    else:
-        logging.warning("no data")
-    await asyncio.sleep(0)
+    while True:
+        arr = np.array(data)
+        if arr.size > 0:
+            logging.info("mean: %.6f and std: %.6f", np.mean(arr), np.std(arr))
+        else:
+            logging.warning("no data")
+        await asyncio.sleep(1)
 
 
 async def main(data: List[int]):
