@@ -1,7 +1,7 @@
 services:
 
   server:
-    profiles: [ 'synchro', 'cooperative' ]
+    profiles: [ 'synchro', 'asyncio' ]
     build:
       context: ./
       dockerfile: server/Dockerfile
@@ -11,7 +11,7 @@ services:
       - "12345:12345"
     environment:
       WS_PORT: 12345
-      LOGLEVEL: "INFO"
+      LOGLEVEL: "DEBUG"
       SERVER_FREQUENCY: 0.5
     healthcheck:
       test: [ "CMD-SHELL", "curl http://localhost:12345/healthcheck" ]
@@ -35,17 +35,17 @@ services:
       server:
         condition: service_healthy
 
-  client-cooperative:
-    profiles: [ 'cooperative' ]
+  client-asyncio:
+    profiles: [ 'asyncio' ]
     build:
       context: ./
-      dockerfile: client_cooperative/Dockerfile
+      dockerfile: client_asyncio/Dockerfile
     networks:
       - local-network
     environment:
       WS_HOST: "server"
       WS_PORT: 12345
-      LOGLEVEL: "INFO"
+      LOGLEVEL: "DEBUG"
     depends_on:
       server:
         condition: service_healthy

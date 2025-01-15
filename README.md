@@ -6,8 +6,9 @@ Based on [websockets](https://github.com/python-websockets/websockets) Python's 
 
 #### Methods
 * `synchro`: a synchronous client that listens to the server, computes
-the statistics and then goes back to listening to the incoming data.
-* `cooperative`: an asynchronous client that cooperatively listens to the
+the statistics and then goes back to listening to the incoming data in this 
+precise order.
+* `asyncio`: an asynchronous client that cooperatively listens to the
 server and computes the statistics.
 * `multithreading`: TBI
 * `multiprocessing`: TBI via a bus service
@@ -24,7 +25,7 @@ and in another terminal session
 ```bash
 export WS_HOST=127.0.0.1
 export WS_PORT=12345
-export LOGLEVEL="INFO"
+export LOGLEVEL="INFO" # or DEBUG if you wanna delve into it
 python -m client_<method>.client
 ```
 

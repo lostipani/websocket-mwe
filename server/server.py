@@ -7,6 +7,7 @@ from fastapi import FastAPI, WebSocket, status
 from fastapi.websockets import WebSocketDisconnect
 
 from commons.parser import get_server_frequency
+from commons.logger import logger
 
 app = FastAPI()
 
@@ -20,6 +21,7 @@ async def ws_endpoint(websocket: WebSocket):
     await websocket.accept()
     while True:
         data = producer()
+        logger.debug(data)
         try:
             await websocket.send_json(data)
         except WebSocketDisconnect:

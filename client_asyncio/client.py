@@ -1,15 +1,11 @@
-import os
 import json
-import logging
 import numpy as np
 import asyncio
 from typing import List, Tuple
 from websockets.asyncio.client import connect
 
-logging.basicConfig(
-    format="%(message)s",
-    level=os.getenv("LOGLEVEL", "INFO"),
-)
+from commons.logger import logger
+from commons.parser import get_URI
 
 
 async def receiver(URI: str, data: List[int]) -> None:
@@ -19,7 +15,7 @@ async def receiver(URI: str, data: List[int]) -> None:
                 data.append(json.loads(message)["value"])
                 await asyncio.sleep(0)
     except ConnectionRefusedError as error:
-        logging.error(error)
+        logger.error(error)
         raise
 
 
@@ -27,21 +23,16 @@ async def calculator(data: List[int]) -> Tuple[float, float]:
     while True:
         arr = np.array(data)
         if arr.size > 0:
-            logging.info("mean: %.6f and std: %.6f", np.mean(arr), np.std(arr))
+            logger.debug(data)
+            logger.info("mean: %.6f and std: %.6f", np.mean(arr), np.std(arr))
         else:
-            logging.warning("no data")
+            logger.warning("no data")
         await asyncio.sleep(1)
 
 
 async def main(data: List[int]):
-    try:
-        URI = f"ws://{os.environ["WS_HOST"]}:{os.environ["WS_PORT"]}/ws"
-    except KeyError:
-        logging.error("missing WS_HOST and/or WS_PORT as env vars")
-        raise
-
     tasks = [
-        asyncio.create_task(receiver(URI, data)),
+        asyncio.create_task(receiver(get_URI(), data)),
         asyncio.create_task(calculator(data)),
     ]
     await asyncio.gather(*tasks)
