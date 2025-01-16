@@ -11,8 +11,8 @@ services:
       - "12345:12345"
     environment:
       WS_PORT: 12345
-      LOGLEVEL: "DEBUG"
-      SERVER_FREQUENCY: 0.5
+      LOGLEVEL: "INFO"
+      SERVER_PERIOD: 1
     healthcheck:
       test: [ "CMD-SHELL", "curl http://localhost:12345/healthcheck" ]
       interval: 10s
@@ -45,7 +45,9 @@ services:
     environment:
       WS_HOST: "server"
       WS_PORT: 12345
-      LOGLEVEL: "DEBUG"
+      LOGLEVEL: "INFO"
+      LISTENER_PERIOD: 4
+      CONSUMER_PERIOD: 1
     depends_on:
       server:
         condition: service_healthy

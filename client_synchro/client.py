@@ -1,5 +1,4 @@
 import json
-import numpy as np
 from typing import List
 from websockets.sync.client import connect
 
@@ -12,8 +11,7 @@ def main(data: List[int]) -> None:
         with connect(get_URI()) as websocket:
             for message in websocket:
                 data.append(json.loads(message)["value"])
-                arr = np.array(data)
-                logger.info(f"mean: {np.mean(arr)} and std: {np.std(arr)}")
+                logger.info(data)
     except ConnectionRefusedError as error:
         logger.error(error)
         raise

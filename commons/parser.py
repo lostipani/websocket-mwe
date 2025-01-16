@@ -10,9 +10,25 @@ def get_URI():
         raise
 
 
-def get_server_frequency() -> float:
+def get_server_period() -> float:
     try:
-        return float(os.environ["SERVER_FREQUENCY"])
+        return float(os.environ["SERVER_PERIOD"])
     except KeyError:
-        logging.error("missing server production frequency, in seconds")
+        logging.error("missing server production period, in seconds")
+        raise
+
+
+def get_listener_period() -> float:
+    try:
+        return float(os.environ["LISTENER_PERIOD"])
+    except KeyError:
+        logging.error("missing client's listener frequency, in seconds")
+        raise
+
+
+def get_consumer_period() -> float:
+    try:
+        return float(os.environ["CONSUMER_PERIOD"])
+    except KeyError:
+        logging.error("missing client's consumer frequency, in seconds")
         raise
