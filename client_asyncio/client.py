@@ -5,36 +5,37 @@ from websockets.asyncio.client import connect
 
 from commons.logger import logger
 from commons.parser import get_URI, get_listener_period, get_consumer_period
+from commons.broker import Bus, BusList
 
 
-async def listener(URI: str, data: List[int], period: float) -> None:
+async def listener(URI: str, bus: Bus, period: float) -> None:
     try:
         async with connect(URI) as websocket:
             async for message in websocket:
-                data.append(json.loads(message)["value"])
+                bus.add(json.loads(message)["value"])
                 await asyncio.sleep(period)
     except ConnectionRefusedError as error:
         logger.error(error)
         raise
 
 
-async def consumer(data: List[int], period: float) -> Tuple[float, float]:
+async def consumer(bus: Bus, period: float) -> Tuple[float, float]:
     while True:
-        if len(data) > 0:
-            logger.info(data)
+        if bus.size() > 0:
+            logger.info(bus)
         else:
             logger.warning("no data")
         await asyncio.sleep(period)
 
 
-async def main(data: List[int]):
+async def main(bus: Bus):
     tasks = [
-        asyncio.create_task(listener(get_URI(), data, get_listener_period())),
-        asyncio.create_task(consumer(data, get_consumer_period())),
+        asyncio.create_task(listener(get_URI(), bus, get_listener_period())),
+        asyncio.create_task(consumer(bus, get_consumer_period())),
     ]
     await asyncio.gather(*tasks)
 
 
 if __name__ == "__main__":
-    data: List[int] = []
-    asyncio.run(main(data))
+    bus = BusList(data=[])
+    asyncio.run(main(bus))
