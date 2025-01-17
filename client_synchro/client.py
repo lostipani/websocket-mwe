@@ -4,7 +4,7 @@ from websockets.sync.client import connect
 
 from commons.logger import logger
 from commons.parser import get_URI
-from commons.broker import Bus, BusList
+from commons.broker import Bus
 
 
 def main(bus: Bus) -> None:
@@ -19,5 +19,5 @@ def main(bus: Bus) -> None:
 
 
 if __name__ == "__main__":
-    bus = BusList(data=[])
+    bus = Bus.factory(data=[0])
     main(bus)

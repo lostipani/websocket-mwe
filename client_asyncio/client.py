@@ -5,7 +5,7 @@ from websockets.asyncio.client import connect
 
 from commons.logger import logger
 from commons.parser import get_URI, get_listener_period, get_consumer_period
-from commons.broker import Bus, BusList
+from commons.broker import Bus
 
 
 async def listener(URI: str, bus: Bus, period: float) -> None:
@@ -37,5 +37,5 @@ async def main(bus: Bus):
 
 
 if __name__ == "__main__":
-    bus = BusList(data=[])
+    bus = Bus.factory(data=[0])
     asyncio.run(main(bus))
