@@ -6,25 +6,25 @@ class NotImplementedError:
     pass
 
 
-class Bus(object):
+class Broker(object):
     """
-    Bus classes have to feature the following methods:
+    Broker classes have to feature the following methods:
         add
         size
     """
 
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, data):
-        self.data = data
+    def __init__(self, backend: Any):
+        self.backend = backend
 
     def __str__(self) -> str:
-        return str(self.data)
+        return str(self.backend)
 
     @staticmethod
-    def factory(data):
-        if isinstance(data, list):
-            return BusList(data)
+    def factory(backend):
+        if isinstance(backend, list):
+            return BrokerList(backend)
         else:
             raise NotImplementedError
 
@@ -37,12 +37,12 @@ class Bus(object):
         pass
 
 
-class BusList(Bus):
-    def __init__(self, data: List[Any]):
-        super().__init__(data)
+class BrokerList(Broker):
+    def __init__(self, backend: List[Any]):
+        super().__init__(backend)
 
     def add(self, value: Any):
-        self.data.append(value)
+        self.backend.append(value)
 
     def size(self) -> int:
-        return len(self.data)
+        return len(self.backend)
