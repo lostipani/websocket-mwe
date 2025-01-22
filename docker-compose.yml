@@ -1,7 +1,7 @@
 services:
 
   server:
-    profiles: [ 'synchro', 'asyncio' ]
+    profiles: [ 'synchro', 'asyncio', 'multiprocess' ]
     build:
       context: ./
       dockerfile: server/Dockerfile
@@ -51,6 +51,39 @@ services:
     depends_on:
       server:
         condition: service_healthy
+
+  client-multiprocess-listener:
+    profiles: [ 'multiprocess' ]
+    build:
+      context: ./
+      dockerfile: client_multiprocess/listener/Dockerfile
+    networks:
+      - local-network
+    environment:
+      WS_HOST: "server"
+      WS_PORT: 12345
+      LOGLEVEL: "INFO"
+      LISTENER_PERIOD: 4
+      CONSUMER_PERIOD: 1
+      BROKER_HOST: "rabbitmq"
+    depends_on:
+      server:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  rabbitmq:
+    profiles: [ 'multiprocess' ]
+    image: rabbitmq:4
+    networks:
+      - local-network
+    ports:
+      - "5672:5672"
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
 
 networks:
   local-network:

@@ -1,4 +1,5 @@
 import os
+from typing import Any, Dict
 from .logger import logging
 
 
@@ -31,4 +32,12 @@ def get_consumer_period() -> float:
         return float(os.environ["CONSUMER_PERIOD"])
     except KeyError:
         logging.error("missing client's consumer frequency, in seconds")
+        raise
+
+
+def get_broker_params() -> Dict[str, Any]:
+    try:
+        return {"host": (os.environ["BROKER_HOST"])}
+    except KeyError:
+        logging.error("missing broker's hostname")
         raise
