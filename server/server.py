@@ -30,7 +30,7 @@ async def ws_endpoint(websocket: WebSocket):
 
 
 @app.get("/http")
-def http_endpoint():
+async def http_endpoint():
     return producer()
 
 
@@ -38,7 +38,7 @@ def http_endpoint():
     "/healthcheck",
     status_code=status.HTTP_200_OK,
 )
-def healthcheck():
+async def healthcheck():
     return {"value": 0}
 
 

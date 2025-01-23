@@ -20,7 +20,7 @@ server and consumes.
 pip install -r requirements.txt
 export WS_PORT=12345
 export SERVER_PERIOD=0.5
-python server/server.py
+python -m server.server
 ```
 and in another terminal session
 ```bash
