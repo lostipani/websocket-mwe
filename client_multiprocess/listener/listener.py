@@ -1,28 +1,40 @@
 import json
-import asyncio
-from websockets.asyncio.client import connect
+import pika
+import time
+from websockets.sync.client import connect
 
 from commons.logger import logger
 from commons.parser import get_URI, get_listener_period, get_broker_params
 from commons.broker import Broker
 
 
-async def listener(URI: str, broker: Broker, period: float) -> None:
+def listener(URI: str, broker: Broker, period: float) -> None:
     try:
-        async with connect(URI) as websocket:
-            async for message in websocket:
-                broker.add(str(json.loads(message)["value"]))
-                await asyncio.sleep(period)
+        connection = pika.BlockingConnection(
+            pika.ConnectionParameters(host=broker.params.get("host"))
+        )
+        channel = connection.channel()
+        with connect(URI) as websocket:
+            for message in websocket:
+                channel.queue_declare(queue=broker.params.get("queue"))
+                channel.basic_publish(
+                    exchange="",
+                    routing_key=broker.params.get("routing_key"),
+                    body=str(json.loads(message)["value"]),
+                    properties=pika.BasicProperties(
+                        delivery_mode=pika.DeliveryMode.Persistent
+                    ),
+                )
+                # connection.close()
+                # broker.add(str(json.loads(message)["value"]))
+                time.sleep(period)
     except ConnectionRefusedError as error:
         logger.error(error)
         raise
 
 
-async def main(broker: Broker):
-    tasks = [
-        asyncio.create_task(listener(get_URI(), broker, get_listener_period()))
-    ]
-    await asyncio.gather(*tasks)
+def main(broker: Broker):
+    listener(get_URI(), broker, get_listener_period())
 
 
 if __name__ == "__main__":
@@ -33,4 +45,4 @@ if __name__ == "__main__":
         host=broker_params.get("host"),
         routing_key="test",
     )
-    asyncio.run(main(broker))
+    main(broker)
