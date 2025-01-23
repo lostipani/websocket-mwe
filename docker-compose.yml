@@ -15,10 +15,24 @@ services:
       SERVER_PERIOD: 1
     healthcheck:
       test: [ "CMD-SHELL", "curl http://localhost:12345/healthcheck" ]
-      interval: 10s
-      retries: 5
-      start_period: 30s
-      timeout: 10s
+      interval: 30s
+      timeout: 30s
+      start_period: 10s
+      retries: 3
+    
+  rabbitmq:
+    profiles: [ 'multiprocess' ]
+    image: rabbitmq:4
+    networks:
+      - local-network
+    ports:
+      - "5672:5672"
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      start_period: 10s
+      retries: 3    
 
   client-synchro:
     profiles: [ 'synchro' ]
@@ -71,19 +85,6 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-
-  rabbitmq:
-    profiles: [ 'multiprocess' ]
-    image: rabbitmq:4
-    networks:
-      - local-network
-    ports:
-      - "5672:5672"
-    healthcheck:
-      test: rabbitmq-diagnostics -q ping
-      interval: 30s
-      timeout: 30s
-      retries: 3
 
 networks:
   local-network:

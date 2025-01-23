@@ -11,7 +11,7 @@ async def listener(URI: str, broker: Broker, period: float) -> None:
     try:
         async with connect(URI) as websocket:
             async for message in websocket:
-                broker.add(json.loads(message)["value"])
+                broker.add(str(json.loads(message)["value"]))
                 await asyncio.sleep(period)
     except ConnectionRefusedError as error:
         logger.error(error)
@@ -22,7 +22,7 @@ async def main(broker: Broker):
     tasks = [
         asyncio.create_task(listener(get_URI(), broker, get_listener_period()))
     ]
-    asyncio.gather(*tasks)
+    await asyncio.gather(*tasks)
 
 
 if __name__ == "__main__":
