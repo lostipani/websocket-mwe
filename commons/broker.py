@@ -16,7 +16,7 @@ class Broker(object):
 
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, backend: Any, **kwargs):
+    def __init__(self, backend: Any):
         self.backend = backend
 
     def __str__(self) -> str:
@@ -58,19 +58,18 @@ class BrokerRabbitMQ(Broker):
         self.connection = pika.BlockingConnection(
             pika.ConnectionParameters(host=self.params.get("host"))
         )
+        self.channel = self.connection.channel()
 
     def add(self, value: Any):
-        channel = self.connection.channel()
-        channel.queue_declare(queue=self.params.get("queue"))
-        channel.basic_publish(
-            exchange="",
+        self.channel.queue_declare(queue=self.params.get("queue"))
+        self.channel.basic_publish(
+            exchange=self.params.get("exchange"),
             routing_key=self.params.get("routing_key"),
             body=value,
             properties=pika.BasicProperties(
                 delivery_mode=pika.DeliveryMode.Persistent
             ),
         )
-        self.connection.close()
 
     def size(self) -> int:
         pass
