@@ -86,6 +86,23 @@ services:
       rabbitmq:
         condition: service_healthy
 
+  client-multiprocess-consumer:
+    profiles: [ 'multiprocess' ]
+    build:
+      context: ./
+      dockerfile: client_multiprocess/consumer/Dockerfile
+    networks:
+      - local-network
+    environment:
+      LOGLEVEL: "INFO"
+      CONSUMER_PERIOD: 1
+      BROKER_HOST: "rabbitmq"
+    depends_on:
+      server:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
 networks:
   local-network:
     driver: bridge

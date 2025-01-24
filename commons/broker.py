@@ -1,5 +1,5 @@
 import abc
-from typing import Any, List
+from typing import Any, Callable, List
 import pika
 
 
@@ -60,6 +60,9 @@ class BrokerRabbitMQ(Broker):
         )
         self.channel = self.connection.channel()
 
+    def size(self) -> int:
+        pass
+
     def add(self, value: Any):
         self.channel.queue_declare(queue=self.params.get("queue"))
         self.channel.basic_publish(
@@ -71,5 +74,11 @@ class BrokerRabbitMQ(Broker):
             ),
         )
 
-    def size(self) -> int:
-        pass
+    def get(self, callback: Callable) -> Any:
+        self.channel.queue_declare(queue=self.params.get("queue"))
+        self.channel.basic_consume(
+            queue=self.params.get("queue"),
+            on_message_callback=callback,
+            auto_ack=True,
+        )
+        self.channel.start_consuming()

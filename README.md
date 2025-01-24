@@ -35,6 +35,7 @@ In case of the `multiprocess` method with RabbitMQ (see section below), type in 
 ```bash
 export BROKER_HOST=127.0.0.1
 python -m client_multiprocess.listener.listener
+python -m client_multiprocess.consumer.consumer
 ```
 
 #### On Docker
