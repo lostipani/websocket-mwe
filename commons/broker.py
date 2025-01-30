@@ -36,7 +36,7 @@ class Broker(object):
         pass
 
     @abc.abstractmethod
-    def size(self):
+    def is_empty(self) -> bool:
         pass
 
 
@@ -47,8 +47,11 @@ class BrokerList(Broker):
     def add(self, value: Any):
         self.backend.append(value)
 
-    def size(self) -> int:
-        return len(self.backend)
+    def get(self) -> Any:
+        return self.backend[-1]
+
+    def is_empty(self) -> bool:
+        return len(self.backend) == 0
 
 
 class BrokerRabbitMQ(Broker):
@@ -60,8 +63,8 @@ class BrokerRabbitMQ(Broker):
         )
         self.channel = self.connection.channel()
 
-    def size(self) -> int:
-        pass
+    def is_empty(self) -> bool:
+        raise BrokerNotImplementedError
 
     def add(self, value: Any):
         self.channel.queue_declare(queue=self.params.get("queue"))

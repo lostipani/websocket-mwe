@@ -40,7 +40,7 @@ python -m client_multiprocess.consumer.consumer
 
 #### On Docker
 ```bash
-docker-compose --profile <method> up --build
+docker compose --profile <method> up --build
 ```
 
 ### Setup RabbitMQ for multiprocessing

@@ -1,6 +1,5 @@
 import json
 import asyncio
-from typing import Tuple
 from websockets.asyncio.client import connect
 
 from commons.logger import logger
@@ -19,25 +18,25 @@ async def listener(URI: str, broker: Broker, period: float) -> None:
         raise
 
 
-async def consumer(broker: Broker, period: float) -> Tuple[float, float]:
+async def consumer(broker: Broker, period: float):
     while True:
-        if broker.size() > 0:
-            logger.info(broker)
-        else:
+        if broker.is_empty():
             logger.warning("no data")
+        else:
+            logger.info(broker.get())
         await asyncio.sleep(period)
 
 
 async def main(broker: Broker):
     tasks = [
         asyncio.create_task(
-                listener(get_URI(), broker, get_listener_period())
-            ),
+            listener(get_URI(), broker, get_listener_period())
+        ),
         asyncio.create_task(consumer(broker, get_consumer_period())),
     ]
     await asyncio.gather(*tasks)
 
 
 if __name__ == "__main__":
-    broker = Broker.factory(backend=[0])
+    broker = Broker.factory(backend=[])
     asyncio.run(main(broker))
