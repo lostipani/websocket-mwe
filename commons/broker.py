@@ -126,4 +126,7 @@ class BrokerRabbitMQ(Broker):
         self.channel.start_consuming()
 
     def is_empty(self) -> bool:
-        raise BrokerNotImplementedError
+        queue = self.channel.queue_declare(
+            queue=self.params.get("queue"), passive=True
+        )
+        return queue.method.message_count == 0
