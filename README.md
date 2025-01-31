@@ -9,7 +9,7 @@ Based on [websockets](https://github.com/python-websockets/websockets) Python's 
 and then goes back to listening to the incoming data in this 
 precise order.
 * `asyncio`: an asynchronous client that listens to the server and consumes in a cooperative way. 
-* `multithreading`: TBI
+* `multithreading`: implemented with the help of the `concurrent.futures` library
 * `multiprocess`: `listener` and `consumer` processes communicating via a message broker, e.g. RabbitMQ.
 
 ## How to run

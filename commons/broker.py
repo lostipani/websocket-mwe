@@ -30,6 +30,8 @@ class Broker(object):
     def factory(backend, **kwargs):
         if isinstance(backend, list):
             return BrokerList(backend)
+        if isinstance(backend, Queue):
+            return BrokerQueue(backend)
         elif isinstance(backend, str) and backend.lower() == "rabbitmq":
             return BrokerRabbitMQ(**kwargs)
         else:
