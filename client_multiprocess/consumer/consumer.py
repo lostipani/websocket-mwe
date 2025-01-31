@@ -26,9 +26,9 @@ if __name__ == "__main__":
     broker_params = get_broker_params()
     broker = Broker.factory(
         backend="rabbitmq",
-        queue="test",
+        queue=broker_params.get("queue", "test"),
         host=broker_params.get("host"),
-        routing_key="test",
-        exchange="",
+        routing_key=broker_params.get("routing_key", "test"),
+        exchange=broker_params.get("exchange", ""),
     )
     main(broker)

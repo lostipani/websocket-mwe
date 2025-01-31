@@ -1,10 +1,14 @@
 import abc
+from queue import Queue
 from typing import Any, Callable, List
 import pika
 
 
 class BrokerNotImplementedError:
     pass
+
+
+Value = Any
 
 
 class Broker(object):
@@ -32,7 +36,11 @@ class Broker(object):
             raise BrokerNotImplementedError
 
     @abc.abstractmethod
-    def add(self, value):
+    def add(self, value: Value, **kwargs):
+        pass
+
+    @abc.abstractmethod
+    def get(self, **kwargs) -> Value:
         pass
 
     @abc.abstractmethod
@@ -41,20 +49,41 @@ class Broker(object):
 
 
 class BrokerList(Broker):
-    def __init__(self, backend: List[Any]):
+
+    def __init__(self, backend: List[Value]):
         super().__init__(backend)
 
-    def add(self, value: Any):
+    def add(self, value: Value, **kwargs):
+        del kwargs
         self.backend.append(value)
 
-    def get(self) -> Any:
+    def get(self, **kwargs) -> Value:
+        del kwargs
         return self.backend[-1]
 
     def is_empty(self) -> bool:
         return len(self.backend) == 0
 
 
+class BrokerQueue(Broker):
+
+    def __init__(self, backend: Queue):
+        super().__init__(backend)
+
+    def add(self, value: Value, **kwargs):
+        del kwargs
+        self.backend.put(value)
+
+    def get(self, **kwargs) -> Value:
+        del kwargs
+        return self.backend.get()
+
+    def is_empty(self) -> bool:
+        return self.backend.empty()
+
+
 class BrokerRabbitMQ(Broker):
+
     def __init__(self, **kwargs):
         super().__init__("rabbitmq")
         self.params = kwargs
@@ -63,10 +92,8 @@ class BrokerRabbitMQ(Broker):
         )
         self.channel = self.connection.channel()
 
-    def is_empty(self) -> bool:
-        raise BrokerNotImplementedError
-
-    def add(self, value: Any):
+    def add(self, value: Value, **kwargs):
+        del kwargs
         self.channel.queue_declare(queue=self.params.get("queue"))
         self.channel.basic_publish(
             exchange=self.params.get("exchange"),
@@ -77,7 +104,8 @@ class BrokerRabbitMQ(Broker):
             ),
         )
 
-    def get(self, callback: Callable) -> Any:
+    def get(self, **kwargs) -> Value:
+        callback: Callable = kwargs["callback"]
         self.channel.queue_declare(queue=self.params.get("queue"))
         self.channel.basic_consume(
             queue=self.params.get("queue"),
@@ -85,3 +113,6 @@ class BrokerRabbitMQ(Broker):
             auto_ack=True,
         )
         self.channel.start_consuming()
+
+    def is_empty(self) -> bool:
+        raise BrokerNotImplementedError
