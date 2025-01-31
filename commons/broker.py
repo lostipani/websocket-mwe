@@ -13,9 +13,18 @@ Value = Any
 
 class Broker(object):
     """
-    Broker classes have to feature the following methods:
+    Abstract methods to be implemented:
         add
-        size
+        get
+        is_empty
+
+    This base class is equipped with a factory method to instantiate the
+    proper derived class depending on the chosen backend.
+
+    Args
+        backend: an instance of the Value container
+    Raises
+        BrokerNotImplementedError
     """
 
     __metaclass__ = abc.ABCMeta
