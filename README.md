@@ -1,4 +1,4 @@
-# Websocket-mwe
+# A micro-service architecture for concurrent requests via different protocols
 A server produces a random `Gauss(0,1)` each second. The client listens to,
 caches the number in-memory and logs the result.
 
