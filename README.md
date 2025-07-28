@@ -3,15 +3,15 @@
 * A server produces a random `Gauss(0,1)` at the chosen period.
 * Requests can be made to HTTP and Websocket endpoints.
 * The client listens to, caches the number in-memory and logs the result.
-* Clients are implemented in different synchronus and/or concurrent _methods_.
+* Clients are implemented in different synchronous and/or concurrent _methods_, listed below
 
-### Methods
+#### Methods
 * `synchro`: a synchronous client that listens to the server, consumes
 and then goes back to listening to the incoming data in this 
 precise order.
 * `asyncio`: an asynchronous client that listens to the server and consumes in a cooperative way. 
 * `multithreading`: implemented with the help of the `concurrent.futures` library
-* `multiprocess`: `listener` and `consumer` processes communicating via a message broker, e.g. RabbitMQ.
+* `multiprocess`: `listener` and `consumer` processes communicating via a message broker, here `RabbitMQ`.
 
 ## How to run
 
