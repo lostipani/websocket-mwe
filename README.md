@@ -1,10 +1,11 @@
 # A micro-service architecture for concurrent requests via different protocols
-A server produces a random `Gauss(0,1)` each second. The client listens to,
-caches the number in-memory and logs the result.
 
-Based on [websockets](https://github.com/python-websockets/websockets) Python's package.
+* A server produces a random `Gauss(0,1)` at the chosen period.
+* Requests can be made to HTTP and Websocket endpoints.
+* The client listens to, caches the number in-memory and logs the result.
+* Clients are implemented in different synchronus and/or concurrent _methods_.
 
-#### Methods
+### Methods
 * `synchro`: a synchronous client that listens to the server, consumes
 and then goes back to listening to the incoming data in this 
 precise order.
